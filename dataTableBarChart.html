@@ -1,0 +1,172 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title></title>
+
+    <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js" integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6" crossorigin="anonymous"></script>
+
+    <script src="https://cdn.jsdelivr.net/alasql/0.2/alasql.min.js"></script>
+
+
+
+    <script src="https://d3js.org/d3.v5.min.js"></script>
+
+    <script src="https://cdn.jsdelivr.net/npm/@observablehq/stdlib"></script>
+
+    <!--<script type="text/javascript" charset="utf8" src="js/jquery.dataTables.js"></script>-->
+    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/v/dt/jszip-2.5.0/dt-1.10.20/af-2.3.4/b-1.6.1/b-colvis-1.6.1/b-flash-1.6.1/b-html5-1.6.1/b-print-1.6.1/cr-1.5.2/fc-3.3.0/fh-3.1.6/kt-2.5.1/r-2.2.3/rg-1.1.1/rr-1.2.6/sc-2.0.1/sl-1.3.1/datatables.min.css" />
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
+    <script type="text/javascript" src="https://cdn.datatables.net/v/dt/jszip-2.5.0/dt-1.10.20/af-2.3.4/b-1.6.1/b-colvis-1.6.1/b-flash-1.6.1/b-html5-1.6.1/b-print-1.6.1/cr-1.5.2/fc-3.3.0/fh-3.1.6/kt-2.5.1/r-2.2.3/rg-1.1.1/rr-1.2.6/sc-2.0.1/sl-1.3.1/datatables.min.js"></script>
+
+    <script src="js/groupedBarChart.js"></script>
+    <script src="js/createDataTables.js"></script>
+    <!--<script src="https://d3js.org/d3-color.v1.min.js"></script>
+    <script src="https://d3js.org/d3-interpolate.v1.min.js"></script>
+    <script src="https://d3js.org/d3-scale-chromatic.v1.min.js"></script>
+    <script src="https://d3js.org/d3-scale-chromatic.v1.min.js"></script>-->
+
+    <script type="text/javascript">
+
+
+        function variableNames(xvariable, variablesNotGraphed, yvariables, varTbl) {
+            var allVars = [];//payattention to order here, this is how it will appear in our table
+            console.log(xvariable);
+            xvariable.forEach(x => allVars.push(x))
+            variablesNotGraphed.forEach(x => allVars.push(x))
+            yvariables.forEach(x => allVars.push(x))
+
+            var dtcolumns = [];
+            allVars.forEach(colVar => dtcolumns.push({ "data": colVar }))//defined string array of column names for DataTables.net api
+
+
+            //TODO come back and make this a json opject so things can be more clearly accessed by property
+            return [xvariable, yvariables, allVars, dtcolumns, varTbl];
+
+        }
+
+        //incase jquery isnt loaded yet use vinilla js to check doc read (IE only)
+        //document.attachEvent("onreadystatechange", function () {
+        //    // check if the DOM is fully loaded
+        //    if (document.readyState === "complete") {
+        //        // remove the listener, to make sure it isn't fired in future
+        //        document.detachEvent("onreadystatechange", arguments.callee);
+
+        //        var drawbackFunc1 = function (tblData) {
+        //            //js/groupedBarChart
+        //            makeGroupedBarChart(tblData
+        //                , varNames[0]
+        //                , varNames[1]
+        //                , d3.select("#svgGroupedBarChart"));
+        //        }
+
+
+        //        //this is where the magic happens
+        //        var varNames = variableNames(["category_title"], ["trending_month", "channel_title", "title"], ["views", "likes", "dislikes", "comment_count"], "usvideowithcategory")
+
+        //        var table = ajaxWebServiceDataTable(varNames, drawbackFunc1);//js/makeDataTables
+
+        //        //resize d3 chart based on new window size
+        //        function reportWindowSize() {
+        //            drawbackFunc1($('#tblDynamic').DataTable().rows({ page: 'current' }).data().toArray())
+        //        }
+        //        window.onresize = reportWindowSize;
+
+        //    }
+        //});
+
+                //enter desired sql table & columns to create table and chart
+                //and get output that can be used as parameters in the drawbackFunc1 and ajaxWebServiceDataTable
+                //function variableNames(xvariable, variablesNotGraphed, yvariables, varTbl) {
+                //    var allVars = [];//payattention to order here, this is how it will appear in our table
+                //    console.log(xvariable);
+                //    xvariable.forEach(x => allVars.push(x))
+                //    variablesNotGraphed.forEach(x => allVars.push(x))
+                //    yvariables.forEach(x => allVars.push(x))
+
+                //    var dtcolumns = [];
+                //    allVars.forEach(colVar => dtcolumns.push({ "data": colVar }))//defined string array of column names for DataTables.net api
+
+
+                //    //TODO come back and make this a json opject so things can be more clearly accessed by property
+                //    return [xvariable, yvariables, allVars, dtcolumns, varTbl];
+
+                //}
+
+                //this is where the magic happens
+                var varNames = variableNames(["category_title"], ["trending_month", "channel_title", "title"], ["views", "likes", "dislikes", "comment_count"], "usvideowithcategory")
+
+                $(document).ready(function () {
+                    //TODO: comeback and encode columns names client side, decode them serverside based on serverside defined key (SECURITY)
+
+                    //redraw d3 chart when table data changes
+                    var drawbackFunc1 = function (tblData) {
+                        //js/groupedBarChart
+                        makeGroupedBarChart(tblData
+                            , varNames[0]
+                            , varNames[1]
+                            , d3.select("#svgGroupedBarChart"));
+                    }
+                    //js/makeDataTables
+                    var table = ajaxWebServiceDataTable(varNames, drawbackFunc1);
+
+                    //resize d3 chart based on new window size
+                    function reportWindowSize() {
+                        drawbackFunc1($('#tblDynamic').DataTable().rows({ page: 'current' }).data().toArray())
+                    }
+                    window.onresize = reportWindowSize;
+
+                });
+    </script>
+
+    <style>
+        .chart {
+            height: 25rem;
+            position: relative;
+        }
+
+            .chart > svg {
+                width: 100%;
+                height: 100%;
+                /*width: 960px;
+                height: 500px;*/
+            }
+    </style>
+</head>
+
+    <body>
+        <div>
+            <div class="container">
+
+                <div class="row">
+                    <div class="col-12">
+                        <div class="chart">
+                            <svg id="svgGroupedBarChart"></svg>
+                        </div>
+                    </div>
+                </div>
+
+
+                <div id="tableContainer"></div>
+            </div>
+
+
+        </div>
+    </body>
+</html>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
