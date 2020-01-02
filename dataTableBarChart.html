@@ -3,13 +3,17 @@
 <head>
     <meta charset="utf-8" />
     <title></title>
-
     <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
+
+    <!--<script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>-->
+
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js" integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6" crossorigin="anonymous"></script>
 
     <script src="https://cdn.jsdelivr.net/alasql/0.2/alasql.min.js"></script>
-
+    <!--for using alasql to take file inputs-->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/alasql/0.3.7/alasql.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.9.2/xlsx.core.min.js"></script>
 
 
     <script src="https://d3js.org/d3.v5.min.js"></script>
@@ -28,98 +32,7 @@
     <script src="https://d3js.org/d3-scale-chromatic.v1.min.js"></script>
     <script src="https://d3js.org/d3-scale-chromatic.v1.min.js"></script>-->
 
-    <script type="text/javascript">
 
-
-        function variableNames(xvariable, variablesNotGraphed, yvariables, varTbl) {
-            var allVars = [];//payattention to order here, this is how it will appear in our table
-            console.log(xvariable);
-            xvariable.forEach(x => allVars.push(x))
-            variablesNotGraphed.forEach(x => allVars.push(x))
-            yvariables.forEach(x => allVars.push(x))
-
-            var dtcolumns = [];
-            allVars.forEach(colVar => dtcolumns.push({ "data": colVar }))//defined string array of column names for DataTables.net api
-
-
-            //TODO come back and make this a json opject so things can be more clearly accessed by property
-            return [xvariable, yvariables, allVars, dtcolumns, varTbl];
-
-        }
-
-        //incase jquery isnt loaded yet use vinilla js to check doc read (IE only)
-        //document.attachEvent("onreadystatechange", function () {
-        //    // check if the DOM is fully loaded
-        //    if (document.readyState === "complete") {
-        //        // remove the listener, to make sure it isn't fired in future
-        //        document.detachEvent("onreadystatechange", arguments.callee);
-
-        //        var drawbackFunc1 = function (tblData) {
-        //            //js/groupedBarChart
-        //            makeGroupedBarChart(tblData
-        //                , varNames[0]
-        //                , varNames[1]
-        //                , d3.select("#svgGroupedBarChart"));
-        //        }
-
-
-        //        //this is where the magic happens
-        //        var varNames = variableNames(["category_title"], ["trending_month", "channel_title", "title"], ["views", "likes", "dislikes", "comment_count"], "usvideowithcategory")
-
-        //        var table = ajaxWebServiceDataTable(varNames, drawbackFunc1);//js/makeDataTables
-
-        //        //resize d3 chart based on new window size
-        //        function reportWindowSize() {
-        //            drawbackFunc1($('#tblDynamic').DataTable().rows({ page: 'current' }).data().toArray())
-        //        }
-        //        window.onresize = reportWindowSize;
-
-        //    }
-        //});
-
-                //enter desired sql table & columns to create table and chart
-                //and get output that can be used as parameters in the drawbackFunc1 and ajaxWebServiceDataTable
-                //function variableNames(xvariable, variablesNotGraphed, yvariables, varTbl) {
-                //    var allVars = [];//payattention to order here, this is how it will appear in our table
-                //    console.log(xvariable);
-                //    xvariable.forEach(x => allVars.push(x))
-                //    variablesNotGraphed.forEach(x => allVars.push(x))
-                //    yvariables.forEach(x => allVars.push(x))
-
-                //    var dtcolumns = [];
-                //    allVars.forEach(colVar => dtcolumns.push({ "data": colVar }))//defined string array of column names for DataTables.net api
-
-
-                //    //TODO come back and make this a json opject so things can be more clearly accessed by property
-                //    return [xvariable, yvariables, allVars, dtcolumns, varTbl];
-
-                //}
-
-                //this is where the magic happens
-                var varNames = variableNames(["category_title"], ["trending_month", "channel_title", "title"], ["views", "likes", "dislikes", "comment_count"], "usvideowithcategory")
-
-                $(document).ready(function () {
-                    //TODO: comeback and encode columns names client side, decode them serverside based on serverside defined key (SECURITY)
-
-                    //redraw d3 chart when table data changes
-                    var drawbackFunc1 = function (tblData) {
-                        //js/groupedBarChart
-                        makeGroupedBarChart(tblData
-                            , varNames[0]
-                            , varNames[1]
-                            , d3.select("#svgGroupedBarChart"));
-                    }
-                    //js/makeDataTables
-                    var table = ajaxWebServiceDataTable(varNames, drawbackFunc1);
-
-                    //resize d3 chart based on new window size
-                    function reportWindowSize() {
-                        drawbackFunc1($('#tblDynamic').DataTable().rows({ page: 'current' }).data().toArray())
-                    }
-                    window.onresize = reportWindowSize;
-
-                });
-    </script>
 
     <style>
         .chart {
@@ -133,34 +46,256 @@
                 /*width: 960px;
                 height: 500px;*/
             }
+
+        table {
+            max-width: 100%
+        }
+
+        .tblContainer {
+            width: 100%
+        }
+
+
+        @media {
+            .container, .container-lg, .container-md, .container-sm, .container-xl {
+                max-width: 100%
+            }
+        }
+
+        table.dataTable.compact tbody td {
+            padding: 1px;
+        }
+
+        table {
+            width: 100%;
+        }
+
+        ul *{
+            font-size:12px;
+        }
     </style>
 </head>
 
 
 
-    <body>
-        <div>
-            <div class="container">
+<body>
+    <div>
+        <div class="container">
 
-                <div>
-                    test dev banch 2
-                </div>
-
-                <div class="row">
-                    <div class="col-12">
-                        <div class="chart">
-                            <svg id="svgGroupedBarChart"></svg>
-                        </div>
-                    </div>
-                </div>
-
-
-                <div id="tableContainer"></div>
+            <div class="form-group">
+                <p>Select CSV or XLSX file to read:</p>
+                <input id="readfile" type="file" onchange="clientFileToDataTable(event)" />
             </div>
 
 
-        </div>
-    </body>
+
+            <div class="row">
+
+                <div class="col-6">
+                    <div class="row">
+                        <div class="col-6">
+                            <div class="row">
+                                <div class="col-12">
+                                    <div class="row">
+                                        <label class="radio-inline"><input type="radio" name="optradio" class="columnSelector" value="X" checked>Add Xvals</label>
+                                        <label class="radio-inline"><input type="radio" name="optradio" value="Y" class="columnSelector">Add Yvals</label>
+                                    </div>
+                                </div>
+                                <div class="col-12">
+                                    <div class="row">
+                                        <label class="radio-inline"><input type="radio" name="radioTblChart" class="columnSelector" value="tbl1" checked>Chart Table on Left</label>
+                                        <label class="radio-inline"><input type="radio" name="radioTblChart" value="tbl2" class="columnSelector">Chart Table on Rigtht</label>
+
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="col-4">
+                                    <span style="width:100%">Available Columns</span>
+                                    <ul id="ulcols"></ul>
+                                </div>
+
+                                <div class="col-4">
+                                    <span style="width:100%">X Values</span>
+                                    <ul id="ulXvals"></ul>
+                                </div>
+
+                                <div class="col-4">
+                                    <span style="width:100%">Y Values</span>
+                                    <ul id="ulYvals"></ul>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <button type="button" id="btnMakeChart" class="btn btn-primary">Make Chart</button>
+                            </div>
+                        </div>
+
+                        <div class="col-6">
+                            <div class="form-group">
+                                <label for="txaQuery">
+                                    Enter a query with SQL syntax. Use "?" for the name of the table. For example try copy pasting
+                                    <br /><b> SELECT Category, sum(views) as Views FROM ? group by Category </b><br />
+                                    into the query box
+                                </label>
+
+                                <textarea class="col-6 form-control form-control-sm" id="txaQuery" rows="6"></textarea>
+                                <button type="button" class="btn btn-primary" onclick="queryDataTable()">Submit Query</button>
+                            </div>
+                            
+                        </div>
+
+
+                    </div>
+
+                </div>
+
+                <div class="col-6">
+                    <div class="chart">
+                        <svg id="svgGroupedBarChart"></svg>
+                    </div>
+                </div>
+
+            </div>
+
+            <div class="row">
+                <div class="col-12">
+                    <div class="row">
+                        <div class="col-6">
+                            <div id="tableContainer" class="tblContainer"></div>
+                        </div>
+                        <div class="col-6">
+                            <div id="tableChildContainer"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            
+
+
+            <script type="text/javascript">
+
+                function variableNames(xvariable, variablesNotGraphed, yvariables, varTbl) {
+                    var allVars = [];//payattention to order here, this is how it will appear in our table
+                    console.log(xvariable);
+                    xvariable.forEach(x => allVars.push(x))
+                    variablesNotGraphed.forEach(x => allVars.push(x))
+                    yvariables.forEach(x => allVars.push(x))
+
+                    var dtcolumns = [];
+                    allVars.forEach(colVar => dtcolumns.push({ "data": colVar }))//defined string array of column names for DataTables.net api
+
+                    //TODO come back and make this a json opject so things can be more clearly accessed by property
+                    return [xvariable, yvariables, allVars, dtcolumns, varTbl];
+                }
+
+                //this is where the magic happens HARDCODED
+                var varNames = variableNames(["category_title"], ["trending_month", "channel_title", "title"], ["views", "likes", "dislikes", "comment_count"], "usvideowithcategory")
+
+                function makeChart() {
+                    console.log(yv)
+                    var xv = $('#ulXvals > li:nth-child(1)').clone()    //clone the element
+                        .children() //select all the children
+                        .remove()   //remove all the children
+                        .end()  //again go back to selected element
+                        .text();
+                    var yv = [];
+                    $('#ulYvals > li').each(function (x) {
+                        yv.push($(this).children() //select all the children
+                            .remove()   //remove all the children
+                            .end()
+                            .text())
+                    })
+                    if ($("input[name='radioTblChart']:checked").val().includes("tbl1")) {
+                        var tblSelector = "#tblDynamic";
+                    } else {
+                        var tblSelector = "#tblQuery";
+                    }
+                    var data = $(tblSelector).DataTable().data().toArray()
+                    //makeSelectorsFromCols(colNames, ulColID, ulXID, ulYID, radioSelector)
+                    makeGroupedBarChart(data
+                        , xv
+                        , yv
+                        , d3.select("#svgGroupedBarChart"));
+
+                }
+
+
+                $("input[name='radioTblChart']").change(function () {
+                    if ($("input[name='radioTblChart']:checked").val().includes("tbl1")) {
+                        var tblSelector = '#tblDynamic';
+                    } else {
+                        var tblSelector = '#tblQuery';
+                    }
+                    var colNames = Object.keys($(tblSelector).DataTable().data()[0])
+                    makeSelectorsFromCols(colNames, "ulcols", "ulXvals", "ulYvals", "input[name='optradio']:checked")
+                })
+
+
+
+                $(document).ready(function () {
+
+                    //var drawbackFunc1 = function (tblData) {
+                    //    makeGroupedBarChart(tblData, varNames[0], varNames[1], d3.select("#svgGroupedBarChart"));
+                    //}
+                    //var table = ajaxWebServiceDataTable("tableContainer", "tblDynamic", varNames, drawbackFunc1);
+
+                    $('#btnMakeChart').on('click', function (x) {
+                        makeChart()
+
+
+                    })
+
+                    var drawbackFunc34 = function (tblData) {
+                        var xv = $('#ulXvals > li:nth-child(1)').clone()    //clone the element
+                            .children() //select all the children
+                            .remove()   //remove all the children
+                            .end()  //again go back to selected element
+                            .text();
+                        var yv = [];
+                        $('#ulYvals > li').each(function (x) {
+                            yv.push($(this).children() //select all the children
+                                .remove()   //remove all the children
+                                .end()
+                                .text())
+                        })
+
+                        makeGroupedBarChart(tblData
+                            , xv
+                            , yv
+                            , d3.select("#svgGroupedBarChart"));
+                    }
+
+                    loadServerFile("../data/youtubeDataUSdec2018.csv", drawbackFunc34)
+
+
+
+
+
+
+                    //resize d3 chart based on new window size
+                    function reportWindowResize() {
+                        //drawbackFunc34($('#tblDynamic').DataTable().rows({ page: 'current' }).data().toArray())
+                        $('table').css('width', '100%')
+                    }
+                    window.onresize = reportWindowResize;
+
+                });
+
+                function queryDataTable() {
+                    //document.getElementById("txaQuery").value = document.getElementById("txaQuery").value + "\n*";
+                    buildSecondTableFromQuery("tblDynamic", "tblQuery", document.getElementById("txaQuery").value)
+
+                }
+
+
+            </script>
+
+</body>
+
+
+
 </html>
 
 

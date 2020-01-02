@@ -109,12 +109,13 @@ public class dataService : System.Web.Services.WebService
             using (var schemaCommand = new MySql.Data.MySqlClient.MySqlCommand("show tables", con))
             {
                 con.Open();
-                using (var reader = schemaCommand.ExecuteReader(CommandBehavior.SchemaOnly))
+                //using (var reader = schemaCommand.ExecuteReader(CommandBehavior.SchemaOnly))
+                using (var reader = schemaCommand.ExecuteReader())
                 {
                     if (reader.Read())
                     {
                         safeTblString = reader.GetString(0);
-                        if (table.Contains("safeTblString"))
+                        if (table.Contains(safeTblString))
                         {
                             return safeTblString;//return the a table in our DB rather than string sent from client
                         }
