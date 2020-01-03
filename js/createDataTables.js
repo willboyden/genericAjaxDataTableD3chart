@@ -1,6 +1,7 @@
-﻿
-function makeSelectorsFromCols(colNames, ulColID, ulXID, ulYID, radioSelector) {
-    $('#ulcols *').remove();
+﻿//USE BELOW TO CHECK COLUMN TYPE IN DATA TABLE
+//$('#tblDynamic').DataTable().settings()[0].aoColumns[5].sType
+function makeSelectorsFromColNames(colNames, ulColID, ulXID, ulYID, radioSelector) {
+    $('#ulcols *').detach();
 
     colNames.forEach(function (colName) {
         var elem = '<li>' + colName + "<a></a></li>";
@@ -15,25 +16,79 @@ function makeSelectorsFromCols(colNames, ulColID, ulXID, ulYID, radioSelector) {
 
     $(document).on("click", "#ulcols li", function () {
         var elem = '<li>' + $(this).text() + "<a href='javascript: void(0); ' class='remove'>&times;</a></li>";
+
         if ($("input[name='optradio']:checked").val().includes("X")) {
-            if ($('#ulXvals *').length < 1) {
+            if ($('#ulXvals li').parent().length != 0) {
                 $('#ulXvals').append(elem)
             } else {
-                if (!$('#ulXvals').html().includes(elem)) {
-                    console.log("false")
+                if (!$('#ulXvals').html().includes($(this).html())) {
+                    console.log('me thinks it doesnt include el')
                     $('#ulXvals').append(elem)
                 }
+                //if (!$('#ulXvals').html().includes(elem)) {
+                //    console.log('doesnt include el')
+                //    $('#ulXvals').append(elem)
+                //}
             }
 
             
         } else {
             //console.log($("input[name='optradio']:checked").val())
             //$('#ulYvals').append(elem)
-            if (!$('#ulXvals').html().includes(elem)) {
+            if (!$('#ulYvals').html().includes($(this).html())) {
                 $('#ulYvals').append(elem)
             }
         }
         
+    });
+
+}
+
+function makeSelectorsFromDTcols(DTcolSettings0aoColummns, ulColID, ulXID, ulYID, radioSelector) {
+    //$('#tblDynamic').DataTable().settings()[0].aoColumns //example of how to get first parameter of this function
+    //$('#tblDynamic').DataTable().settings()[0].aoColumns[5].sType //example of how to column type from DataTables.net iQuery plugin
+
+    //DTcolSettings0aoColummns.forEach(function (col) {
+    //    console.log(col.sType)
+    //    console.log(col.sTitle)
+    //})
+
+    //$('#ulcols *').remove();
+    $('ul').children().remove()
+    DTcolSettings0aoColummns.forEach(function (col) {
+        var elem = '<li>' + col.sTitle + "<a>  (" + col.sType + ")  </a></li>";
+        //var elem = '<li class="liCols>' + colName + "</li>";
+        $('#ulcols').append(elem)
+        // console.log($(elem))
+
+    })
+    $(document).on("click", "a.remove", function () {
+        $(this).parent().remove();
+    });
+
+    $(document).on("click", "#ulcols li", function () {
+        var elem = '<li>' + $(this).html() + "<a href='javascript: void(0); ' class='remove'>&times;</a></li>";
+        console.log($('#ulXvals *')[0])
+        if ($("input[name='optradio']:checked").val().includes("X")) {
+            if ($('#ulXvals *').length < 1) {
+                $('#ulXvals').append(elem)
+            } else {
+                //remember me added attributes to the <a> element so we cannot check elem
+                if (!$('#ulXvals').html().includes($(this).html())) {
+                    console.log("false")
+                    $('#ulXvals').append(elem)
+                }
+            }
+
+
+        } else {
+            //console.log($("input[name='optradio']:checked").val())
+            //$('#ulYvals').append(elem)
+            if (!$('#ulYvals').html().includes($(this).html())) {
+                $('#ulYvals').append(elem)
+            }
+        }
+
     });
 
 }
@@ -147,6 +202,7 @@ function buildSecondTableFromQuery(tblqryID, tblresID, qrystr) {
 
                 });
                 makeSelectorsFromCols(cnames, "ulcols", "ulXvals", "ulYvals", "input[name='optradio']:checked")
+                    
             }
              
         })
@@ -248,6 +304,8 @@ function clientFileToDataTable(event, drawbackFunc1 = null, drawbackFunc2 = null
                         drawbackFunc2(api.rows({ page: 'current' }).data().toArray());
                     }
                 }
+                
+                //makeSelectorsFromDTcols(api.settings()[0].aoColumns, "ulcols", "ulXvals", "ulYvals", "input[name='optradio']:checked")
                 // makeSelectorsFromCols(cnames, "ulcols", "ulXvals", "ulYvals", "input[name='optradio']:checked")
             },
             initComplete: function () {
@@ -337,6 +395,7 @@ function loadServerFile(filepath, drawbackFunc1 = null, drawbackFunc2 = null) {
                         drawbackFunc2(api.rows({ page: 'current' }).data().toArray());
                     }
                 }
+                makeSelectorsFromDTcols(api.settings()[0].aoColumns, "ulcols", "ulXvals", "ulYvals", "input[name='optradio']:checked")
                // makeSelectorsFromCols(cnames, "ulcols", "ulXvals", "ulYvals", "input[name='optradio']:checked")
             },
             initComplete: function () {
@@ -378,7 +437,8 @@ function loadServerFile(filepath, drawbackFunc1 = null, drawbackFunc2 = null) {
                     }
                    
                 });
-                makeSelectorsFromCols(cnames, "ulcols", "ulXvals", "ulYvals", "input[name='optradio']:checked")
+                
+                //makeSelectorsFromCols(cnames, "ulcols", "ulXvals", "ulYvals", "input[name='optradio']:checked")
             }
             
         })
