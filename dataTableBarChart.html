@@ -6,7 +6,7 @@
     <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
 
     <!--<script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>-->
-
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js" integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6" crossorigin="anonymous"></script>
 
@@ -22,8 +22,17 @@
 
     <!--<script type="text/javascript" charset="utf8" src="js/jquery.dataTables.js"></script>-->
     <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/v/dt/jszip-2.5.0/dt-1.10.20/af-2.3.4/b-1.6.1/b-colvis-1.6.1/b-flash-1.6.1/b-html5-1.6.1/b-print-1.6.1/cr-1.5.2/fc-3.3.0/fh-3.1.6/kt-2.5.1/r-2.2.3/rg-1.1.1/rr-1.2.6/sc-2.0.1/sl-1.3.1/datatables.min.css" />
-    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
+
     <script type="text/javascript" src="https://cdn.datatables.net/v/dt/jszip-2.5.0/dt-1.10.20/af-2.3.4/b-1.6.1/b-colvis-1.6.1/b-flash-1.6.1/b-html5-1.6.1/b-print-1.6.1/cr-1.5.2/fc-3.3.0/fh-3.1.6/kt-2.5.1/r-2.2.3/rg-1.1.1/rr-1.2.6/sc-2.0.1/sl-1.3.1/datatables.min.js"></script>
+
+    <!--TODO: create more efficant datatables download, below used for pdf button-->
+    <script type="text/javascript" src="https://cdn.datatables.net/buttons/1.6.1/js/dataTables.buttons.min.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.53/pdfmake.min.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.53/vfs_fonts.js"></script>
+    <script type="text/javascript" src="https://cdn.datatables.net/buttons/1.6.1/js/buttons.html5.min.js"></script>
+
+
+
 
     <!--<script src="js/groupedBarChart.js"></script>
     <script src="js/createDataTables.js"></script>-->
@@ -32,7 +41,7 @@
     <!-- OR use a specific plotly.js release (e.g. version 1.5.0) -->
     <script src="https://cdn.plot.ly/plotly-1.5.0.min.js"></script>
     <!-- OR an un-minified version is also available -->
-    <<!--script src="https://cdn.plot.ly/plotly-latest.js" charset="utf-8"></script>-->
+    <!--script src="https://cdn.plot.ly/plotly-latest.js" charset="utf-8"></script>-->
 
     <script src="js/groupedBarChart.js"></script>
     <script src="js/createDataTables.js"></script>
@@ -70,6 +79,10 @@
             padding: 1px;
         }
 
+        .dataTable {
+            width: 100%;
+        }
+
         table {
             width: 100%;
         }
@@ -86,10 +99,7 @@
     <div>
         <div class="container">
 
-            <div class="form-group">
-                <p>Select CSV or XLSX file to read (Note that the column names should not contain any spaces or special characters):</p>
-                <input id="readfile" type="file" onchange="clientFileToDataTable(event)" />
-            </div>
+            
 
 
 
@@ -97,39 +107,64 @@
 
                 <div class="col-6">
                     <div class="row">
+
                         <div class="col-6">
                             <div class="row">
-
                                 <div class="col-12">
+
                                     <div class="row">
-                                        <div class="col-6">
-                                            <label class="radio-inline"><input type="radio" name="radioTblChart" class="columnSelector" value="tbl1" checked>Chart Table on Left</label>
+
+                                        <div class="container">
+                                            <div class="dropdown">
+                                                <button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown">
+                                                    Data Source
+                                                    <span class="caret"></span>
+                                                </button>
+                                                <ul class="dropdown-menu">
+                                                    <li><button id="btnSampleData">Sample Data</button></li>
+                                                    <li>Upload CSV/XLSX<input class="btn" id="readfile" type="file" onchange="clientFileToDataTable(event)" /></li>
+                                                    <li class="dropdown-submenu"><button id="btnAjaxData">AJAX Web Service</button></li>
+                                                </ul>
+                                            </div>
                                         </div>
-                                        <div class="col-6">
-                                            <label class="radio-inline"><input type="radio" name="radioTblChart" value="tbl2" class="columnSelector">Chart Table on Rigtht</label>
+                                        <div class="form-group">
+                                            <p>
+                                                Sample data is provided in the table below. Try selecting you own CSV or XLSX file to read
+                                                (Note that the column names should not contain any spaces or special characters):
+                                            </p>
+                                            <!--<input id="readfile" type="file" onchange="clientFileToDataTable(event)" />-->
                                         </div>
                                     </div>
                                 </div>
                             </div>
 
                             <div class="row">
+                                <div class="col-6">
+                                    <label class="radio-inline"><input type="radio" name="radioTblChart" class="columnSelector" value="tbl1" checked>Chart Table on Left</label>
+                                </div>
+                                <div class="col-6">
+                                    <label class="radio-inline"><input type="radio" name="radioTblChart" value="tbl2" class="columnSelector">Chart Table on Rigtht</label>
+                                </div>
+                            </div>
+
+                            <div class="row">
                                 <div class="col-4">
                                     <span style="width:100%">Available Columns</span>
-                                    <ul id="ulcols"></ul>
+                                    <ul id="ulcols" class=".chartSelector"></ul>
                                 </div>
 
                                 <div class="col-4">
                                     <!--<span style="width:100%">X Values</span>-->
                                     <!--<ul id="ulXvals"></ul>-->
                                     <label class="radio-inline"><input type="radio" name="optradio" class="columnSelector" value="X" checked>Add Xvals</label>
-                                    <ul id="ulXvals"></ul>
+                                    <ul id="ulXvals" class=".chartSelector"></ul>
                                 </div>
 
                                 <div class="col-4">
                                     <!--<span style="width:100%">Y Values</span>-->
                                     <!--<ul id="ulYvals"></ul>-->
                                     <label class="radio-inline"><input type="radio" name="optradio" value="Y" class="columnSelector">Add Yvals</label>
-                                    <ul id="ulYvals"></ul>
+                                    <ul id="ulYvals" class=".chartSelector"></ul>
                                 </div>
                             </div>
                             <div class="row">
@@ -140,22 +175,23 @@
                         </div>
 
                         <div class="col-6">
-                            <div class="form-group">
-                                <label for="txaQuery">
-                                    Enter a query with SQL syntax. Use "?" for the name of the table. For example try copy pasting
-                                    <br /><b> SELECT Category, sum(views) as Views FROM ? group by Category </b><br />
-                                    into the query box
-                                </label>
+                            <div class="row">
+                                <div class="col-12">
+                                    <div class="form-group">
+                                        <label for="txaQuery">
+                                            Enter a query with SQL syntax. Use "?" for the name of the table. For example try copy pasting
+                                            <b> SELECT Category, sum(views) as Views FROM ? group by Category </b>
+                                        </label>
 
-                                <textarea class="col-6 form-control form-control-sm" id="txaQuery" rows="6"></textarea>
-                                <button type="button" class="btn btn-primary" onclick="queryDataTable()">Submit Query</button>
+                                        <textarea class="col-6 form-control form-control-sm" id="txaQuery" rows="6"></textarea>
+                                        <button type="button" class="btn btn-primary" onclick="queryDataTable()">Submit Query</button>
+                                    </div>
+                                </div>
                             </div>
                             
+                            
                         </div>
-
-
                     </div>
-
                 </div>
 
                 <div class="col-6">
@@ -186,136 +222,121 @@
             
 
 
-            <script type="text/javascript">
+        <script type="text/javascript">
 
-                function variableNames(xvariable, variablesNotGraphed, yvariables, varTbl) {
-                    var allVars = [];//payattention to order here, this is how it will appear in our table
-                    console.log(xvariable);
-                    xvariable.forEach(x => allVars.push(x))
-                    variablesNotGraphed.forEach(x => allVars.push(x))
-                    yvariables.forEach(x => allVars.push(x))
 
-                    var dtcolumns = [];
-                    allVars.forEach(colVar => dtcolumns.push({ "data": colVar }))//defined string array of column names for DataTables.net api
 
-                    //TODO come back and make this a json opject so things can be more clearly accessed by property
-                    return [xvariable, yvariables, allVars, dtcolumns, varTbl];
-                }
 
-                //this is where the magic happens HARDCODED
-                var varNames = variableNames(["category_title"], ["trending_month", "channel_title", "title"], ["views", "likes", "dislikes", "comment_count"], "usvideowithcategory")
-
-                function makeChart() {
-                    var xv = $('#ulXvals > li:nth-child(1)').clone()    //clone the element
-                        .children() //select all the children
+            function getSelectedColumnsForChart() {
+                var xv = $('#ulXvals > li:nth-child(1)').clone()    //clone the element
+                    .children() //select all the children
+                    .remove()   //remove all the children
+                    .end()  //again go back to selected element
+                    .text();
+                var yv = [];
+                $('#ulYvals > li').each(function (x) {
+                    yv.push($(this).clone().children() //select all the children
                         .remove()   //remove all the children
-                        .end()  //again go back to selected element
-                        .text();
-                    var yv = [];
-                    $('#ulYvals > li').each(function (x) {
-                        yv.push($(this).clone().children() //select all the children
-                            .remove()   //remove all the children
-                            .end()
-                            .text())
-                    })
-                    if ($("input[name='radioTblChart']:checked").val().includes("tbl1")) {
-                        var tblSelector = "#tblDynamic";
-                    } else {
-                        var tblSelector = "#tblQuery";
-                    }
-                    var data = $(tblSelector).DataTable().data().toArray()
-                    //makeSelectorsFromCols(colNames, ulColID, ulXID, ulYID, radioSelector)
-                    makeGroupedBarChart(data
-                        , xv
-                        , yv
-                        , d3.select("#svgGroupedBarChart"));
-
-                }
-
-
-                $("input[name='radioTblChart']").change(function () {
-                    if ($("input[name='radioTblChart']:checked").val().includes("tbl1")) {
-                        var tblSelector = '#tblDynamic';
-                    } else {
-                        var tblSelector = '#tblQuery';
-                    }
-                    //var colNames = Object.keys($(tblSelector).DataTable().data()[0])
-
-                    //$('ul').children().remove()
-                    makeSelectorsFromDTcols($(tblSelector).DataTable().settings()[0].aoColumns, "ulcols", "ulXvals", "ulYvals", "input[name='optradio']:checked")
-                    //makeSelectorsFromCols(colNames, "ulcols", "ulXvals", "ulYvals", "input[name='optradio']:checked")
+                        .end()
+                        .text())
                 })
+                return {"xv":xv, "yv":yv}
+            }
+
+            function makeChart() {               
+                if ($("input[name='radioTblChart']:checked").val().includes("tbl1")) {
+                    var tblSelector = "#tblDynamic";
+                } else {
+                    var tblSelector = "#tblQuery";
+                }
+                var data = $(tblSelector).DataTable().data().toArray()
+                //makeSelectorsFromCols(colNames, ulColID, ulXID, ulYID, radioSelector)
+                makeGroupedBarChart(data
+                    , getSelectedColumnsForChart().xv
+                    , getSelectedColumnsForChart().yv
+                    , d3.select("#svgGroupedBarChart"));
+            }
 
 
+            $("input[name='radioTblChart']").change(function () {
+                if ($("input[name='radioTblChart']:checked").val().includes("tbl1")) {
+                    var tblSelector = '#tblDynamic';
+                } else {
+                    var tblSelector = '#tblQuery';
+                }
+                makeSelectorsFromDTcols($(tblSelector).DataTable().settings()[0].aoColumns, "ulcols", "ulXvals", "ulYvals", "input[name='optradio']:checked")
+                //makeSelectorsFromCols(colNames, "ulcols", "ulXvals", "ulYvals", "input[name='optradio']:checked")
+            })
 
-                $(document).ready(function () {
-
-                    //var drawbackFunc1 = function (tblData) {
-                    //    makeGroupedBarChart(tblData, varNames[0], varNames[1], d3.select("#svgGroupedBarChart"));
-                    //}
-                    //var table = ajaxWebServiceDataTable("tableContainer", "tblDynamic", varNames, drawbackFunc1);
-
-                    $('#btnMakeChart').on('click', function (x) {
-                        makeChart()
-                    })
-                    $('#btnPlotyChart').on('click', function (x) {
-                        makeBoxplot()//js/makePlotlyCharts
-                    })
-
-                    var drawbackFunc34 = function (tblData) {
-                        var xv = $('#ulXvals > li:nth-child(1)').clone()    //clone the element
-                            .children() //select all the children
-                            .remove()   //remove all the children
-                            .end()  //again go back to selected element
-                            .text();
-                        var yv = [];
-                        $('#ulYvals > li').each(function (x) {
-                            console.log($(this).clone().children() //select all the children
-                                .remove()   //remove all the children
-                                .end()
-                                .text())
-
-                            yv.push($(this).clone().children() //select all the children
-                                .remove()   //remove all the children
-                                .end()
-                                .text())
-                        })
-
-                        makeGroupedBarChart(tblData
-                            , xv
-                            , yv
-                            , d3.select("#svgGroupedBarChart"));
-                    }
-
-                    loadServerFile("../data/youtubeDataUSdec2018.csv", drawbackFunc34)
+            $(document).ready(function () {
 
 
-
-
-
-
-                    //resize d3 chart based on new window size
-                    function reportWindowResize() {
-                        //drawbackFunc34($('#tblDynamic').DataTable().rows({ page: 'current' }).data().toArray())
-                        $('table').css('width', '100%')
-                    }
-                    window.onresize = reportWindowResize;
-
+                $('.dropdown-submenu a.test').on("click", function (e) {
+                    $(this).next('ul').toggle();
+                    e.stopPropagation();
+                    e.preventDefault();
                 });
 
-                function queryDataTable() {
-                    //document.getElementById("txaQuery").value = document.getElementById("txaQuery").value + "\n*";
-                    buildSecondTableFromQuery("tblDynamic", "tblQuery", document.getElementById("txaQuery").value)
 
+                $('#btnMakeChart').on('click', function (x) {
+                    makeChart()
+                })
+
+                $('#btnSampleData').on('click', function (x) {
+                    loadServerFile("../data/youtubeDataUSdec2018.csv", drawbackFunc34)
+                })
+
+                $('#btnAjaxData').on('click', function (x) {
+                    function variableNames(xvariable, variablesNotGraphed, yvariables, varTbl) {
+                        var allVars = [];//payattention to order here, this is how it will appear in our table
+                        console.log(xvariable);
+                        xvariable.forEach(x => allVars.push(x))
+                        variablesNotGraphed.forEach(x => allVars.push(x))
+                        yvariables.forEach(x => allVars.push(x))
+
+                        var dtcolumns = [];
+                        allVars.forEach(colVar => dtcolumns.push({ "data": colVar }))//defined string array of column names for DataTables.net api
+
+                        //TODO come back and make this a json opject so things can be more clearly accessed by property
+                        return [xvariable, yvariables, allVars, dtcolumns, varTbl];
+                    }
+                    //this is where the magic happens HARDCODED
+                    var varNames = variableNames(["category_title"], ["trending_month", "channel_title", "title"], ["views", "likes", "dislikes", "comment_count"], "usvideowithcategory")
+                    var drawbackFunc1 = function (tblData) {
+                        makeGroupedBarChart(tblData, varNames[0], varNames[1], d3.select("#svgGroupedBarChart"));
+                    }
+                    var table = ajaxWebServiceDataTable("tableContainer", "tblDynamic", varNames, drawbackFunc1);
+                })
+                
+
+
+                $('#btnPlotyChart').on('click', function (x) {
+                    makeBoxplot()//js/makePlotlyCharts
+                })
+                var drawbackFunc34 = function (tblData) {
+                    makeGroupedBarChart(tblData
+                        , getSelectedColumnsForChart().xv
+                        , getSelectedColumnsForChart().yv
+                        , d3.select("#svgGroupedBarChart"));
                 }
 
+                
 
-            </script>
+                //resize d3 chart based on new window size
+                function reportWindowResize() {
+                    //drawbackFunc34($('#tblDynamic').DataTable().rows({ page: 'current' }).data().toArray())
+                    $('table').css('width', '100%')
+                }
+                window.onresize = reportWindowResize;
 
-</body>
+            });
+            function queryDataTable() {
+                //document.getElementById("txaQuery").value = document.getElementById("txaQuery").value + "\n*";
+                buildSecondTableFromQuery("tblDynamic", "tblQuery", document.getElementById("txaQuery").value)
+            }
+        </script>
 
-
-
+    </body>
 </html>
 
 
