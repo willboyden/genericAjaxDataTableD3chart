@@ -6,7 +6,7 @@ With a clear seperation of client and server data proccessing, we can heavier pr
 
 #BackEnd
 The backend is a C# asmx webservice that takes takes string parameters and returns json(can return xml with minor modification).
-To aviod sql injections rather than directly putt he clients string in our query or rely on a library to safely encide the string. 
+To aviod sql injections rather than directly put the clients string in our query or rely on a library to safely encide the string. 
 We dynammically create the queriery serverside. Serverside defined strings are added to the query if they are contained in the 
 styring parameter sent from client. This example uses C# and mySql but swamping these for other languages should be relativly painless.
 
