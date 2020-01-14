@@ -1,9 +1,12 @@
 ﻿<!DOCTYPE html>
 <html>
 <head>
+    <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
+
+
     <meta charset="utf-8" />
     <title></title>
-    <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
+
 
     <!--<script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>-->
     <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
@@ -87,9 +90,21 @@
             width: 100%;
         }
 
-        ul * {
+        /*ul * {
             font-size: 12px;
         }
+
+        tr * {
+            font-size: 12px;
+        }*/
+
+        body {
+            font-size: .7rem;
+        }
+
+            body .btn {
+                padding: .175rem .25rem;
+            }
     </style>
 </head>
 
@@ -98,19 +113,20 @@
 <body>
     <div>
         <div class="container">
-
-            
-
-
-
             <div class="row">
-
                 <div class="col-6">
                     <div class="row">
-
                         <div class="col-6">
                             <div class="row">
                                 <div class="col-12">
+
+                                    <div class="form-group">
+                                        <p>
+                                            Sample data is provided in the table below. Try selecting you own CSV or XLSX file to read
+                                            (Note that the column names should not contain any spaces or special characters):
+                                        </p>
+                                        <!--<input id="readfile" type="file" onchange="clientFileToDataTable(event)" />-->
+                                    </div>
 
                                     <div class="row">
 
@@ -127,13 +143,7 @@
                                                 </ul>
                                             </div>
                                         </div>
-                                        <div class="form-group">
-                                            <p>
-                                                Sample data is provided in the table below. Try selecting you own CSV or XLSX file to read
-                                                (Note that the column names should not contain any spaces or special characters):
-                                            </p>
-                                            <!--<input id="readfile" type="file" onchange="clientFileToDataTable(event)" />-->
-                                        </div>
+
                                     </div>
                                 </div>
                             </div>
@@ -182,7 +192,6 @@
                                             Enter a query with SQL syntax. Use "?" for the name of the table. For example try copy pasting
                                             <b> SELECT Category, sum(views) as Views FROM ? group by Category </b>
                                         </label>
-
                                         <textarea class="col-6 form-control form-control-sm" id="txaQuery" rows="6"></textarea>
                                         <button type="button" class="btn btn-primary" onclick="queryDataTable()">Submit Query</button>
                                     </div>
@@ -219,13 +228,9 @@
                 </div>
             </div>
 
-            
-
-
         <script type="text/javascript">
 
-
-
+            
 
             function getSelectedColumnsForChart() {
                 var xv = $('#ulXvals > li:nth-child(1)').clone()    //clone the element
@@ -259,10 +264,12 @@
 
 
             $("input[name='radioTblChart']").change(function () {
-                if ($("input[name='radioTblChart']:checked").val().includes("tbl1")) {
-                    var tblSelector = '#tblDynamic';
+                if ($("input[name='radioTblChart']:checked").val().includes("tbl2")) {
+                    if ($('#tblQuery').length) {
+                        var tblSelector = '#tblQuery';
+                    }                   
                 } else {
-                    var tblSelector = '#tblQuery';
+                    var tblSelector = '#tblDynamic';               
                 }
                 makeSelectorsFromDTcols($(tblSelector).DataTable().settings()[0].aoColumns, "ulcols", "ulXvals", "ulYvals", "input[name='optradio']:checked")
                 //makeSelectorsFromCols(colNames, "ulcols", "ulXvals", "ulYvals", "input[name='optradio']:checked")
@@ -270,22 +277,28 @@
 
             $(document).ready(function () {
 
+                //start the page with sample data
+                var drawbackFunc34 = function (tblData) {
+                    makeGroupedBarChart(tblData
+                        , getSelectedColumnsForChart().xv
+                        , getSelectedColumnsForChart().yv
+                        , d3.select("#svgGroupedBarChart"));
+                }
+                loadServerFile("../data/youtubeDataUSdec2018.csv", drawbackFunc34)
 
+                //function for making submenus later
                 $('.dropdown-submenu a.test').on("click", function (e) {
                     $(this).next('ul').toggle();
                     e.stopPropagation();
                     e.preventDefault();
                 });
 
-
-                $('#btnMakeChart').on('click', function (x) {
-                    makeChart()
-                })
-
+                //reset to sample data if need be
                 $('#btnSampleData').on('click', function (x) {
                     loadServerFile("../data/youtubeDataUSdec2018.csv", drawbackFunc34)
                 })
 
+                //TODO: add more webservice offerings
                 $('#btnAjaxData').on('click', function (x) {
                     function variableNames(xvariable, variablesNotGraphed, yvariables, varTbl) {
                         var allVars = [];//payattention to order here, this is how it will appear in our table
@@ -307,21 +320,17 @@
                     }
                     var table = ajaxWebServiceDataTable("tableContainer", "tblDynamic", varNames, drawbackFunc1);
                 })
-                
 
-
+                $('#btnMakeChart').on('click', function (x) {
+                    makeChart()
+                })
                 $('#btnPlotyChart').on('click', function (x) {
                     makeBoxplot()//js/makePlotlyCharts
-                })
-                var drawbackFunc34 = function (tblData) {
-                    makeGroupedBarChart(tblData
-                        , getSelectedColumnsForChart().xv
-                        , getSelectedColumnsForChart().yv
-                        , d3.select("#svgGroupedBarChart"));
-                }
-
+                })              
+                
                 
 
+                
                 //resize d3 chart based on new window size
                 function reportWindowResize() {
                     //drawbackFunc34($('#tblDynamic').DataTable().rows({ page: 'current' }).data().toArray())

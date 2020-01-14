@@ -45,7 +45,11 @@ function makeSelectorsFromColNames(colNames, ulColID, ulXID, ulYID, radioSelecto
 }
 
 function makeSelectorsFromDTcols(DTcolSettings0aoColummns, ulColID, ulXID, ulYID, radioSelector) {
-    $('.chartSelector').children().remove()
+    //$('.chartSelector').children().remove()
+    if ($('#ulcols li').length) {
+        $('#ulcols li').remove()
+    }
+    
     DTcolSettings0aoColummns.forEach(function (col) {
         var elem = '<li>' + col.sTitle + "<a>  (" + col.sType + ")  </a></li>";
         $('#ulcols').append(elem)
@@ -105,7 +109,8 @@ function sizeQueryResultTable(containerID) {
 }
 
 function makeTableSettings(data, dtcolumns, drawbackFunc1 = null, drawbackFunc2 = null) {
-    return({
+    return ({
+        responsive: true,
         "iDisplayLength": 10,
         buttons: ['copy', 'excel', 'pdf', 'csv', 'print'],
         "dom": 'Bflrtip',
@@ -150,7 +155,7 @@ function makeTableSettings(data, dtcolumns, drawbackFunc1 = null, drawbackFunc2 
                     });
                 } else {
                     //var title = $(this).text();
-                    var input = $(`<input type = "text" placeholder = "Search ${column.dataSrc()}"></input>`)
+                    var input = $(`<input type = "text" placeholder = "${column.dataSrc()}"></input>`)
                         .appendTo($(column.footer()).empty())
                         .on('keyup change', function () {
                             if (column.search() !== this.value) {
